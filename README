@@ -66,6 +66,7 @@ Next steps
 There are a few things that are missing in this release and will probably be added over the next few days:
 
 * It should be possible to customize the month header using date formatting so one can display "January", "January 2009", "Jan 09" etc. without too much hassle. This is definitely going to be added.
+* The current date (= today) should be highlighted if the user wants to. At the moment, of course, this can be done inside the block but I'm thinking about including it as a separate option.
 * At the moment, there are no possibilities to just flip through months like in most calendars. I'm undecided if this belongs in this plugins or should just be done by the user.
 
 Bugs & Feedback
