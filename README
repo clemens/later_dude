@@ -1,13 +1,76 @@
 LaterDude
 =========
 
-Introduction goes here.
+LaterDude is a small calendar helper plugin for Rails with i18n support.
+
+It was heavily inspired by "Jeremy Voorhis'/Geoffrey Grosenbach's calendar_helper plugin":http://topfunky.net/svn/plugins/calendar_helper/. Here's what's different:
+
+  * LaterDude leverages the power of the "Rails i18n plugin":http://rails-i18n.org. This means that if you have Rails 2.2 or higher (or if you've installed the i18n gem and the plugin separately), you can just drop in locales and you'll get localized month and day names.
+  * Where the calendar_helper had one helper method that internally called multiple other private methods, LaterDude keeps the namespace clean by tucking away all of its functionality in a presenter (of sorts).
 
 
-Example
-=======
+Examples
+========
 
-Example goes here.
+There are two basic ways of outputting a calendar: via the presenter itself or by using the helper method:
 
+  <%= calendar_for(2009, 1) %> and
+  <%= LaterDude::Calendar.new(2009, 1).to_html %>
+  
+both yield the same results. This is similar to what Rails does with RedCloth/BlueCloth filters.
 
-Copyright (c) 2009 Clemens Kofler, released under the MIT license
+In addition to year and month which are required parameters you can optionally supply an options hash:
+
+  <%= calendar_for(2009, 1, :calendar_class => "my_calendar", :first_day_of_week => 1)
+  
+Possible options are:
+
+  * :calendar_class: The CSS class for the surrounding table. Defaults to "calendar".
+  * :first_day_of_week: The first day of the week (0 = Sunday, 1 = Monday etc.). Defaults to the :'date.first_day_of_week' translation in the respective locale or 0 if no translation can be found.
+  * :hide_day_names: Hide the table header showing day names. Defaults to false.
+  * :hide_month_name: Hide the table header showing the month name. Defaults to false.
+  * :use_full_day_names: Use full instead of abbreviated day names. Defaults to false.
+  * :use_full_month_names: Use full instead of abbreviated month names. Defaults to true.
+
+You can also pass in a block to mark days according to your own set of rules. The block gets passed each day of the current month (i.e. days of the previous and following month are *not* yielded):
+
+  <%= calendar_for(2009, 1) do |day|
+    if Calendar.has_events_on?(day)
+      [link_to events_path(day.year, day.month, day.day), { :class => "dayWithEvents" }]
+    else
+      day.day
+    end
+  end %>
+
+The block can either return an array containing two elements or a single value. If an array is returned, the first element will be the content of the table cell and the second will be used as HTML options for the table cell tag. If a single value is returned, it will be used as the content of the table cell.
+
+Hint: You can avoid cluttering up your views and move the block to a helper:
+
+  # app/helpers/calendar_helper.rb
+  def calendar_events_proc
+    lambda do |day|
+      if Calendar.has_events_on?(day)
+        [link_to events_path(day.year, day.month, day.day), { :class => "dayWithEvents" }]
+      else
+        day.day
+      end
+    end
+  end
+
+  # app/views/calendar/show.html
+  <%= calendar_for(2009, 1, &calendar_events_proc)
+
+Next steps
+==========
+
+There are a few things that are missing in this release and will probably be added over the next few days:
+
+* It should be possible to customize the month header using date formatting so one can display "January", "January 2009", "Jan 09" etc. without too much hassle. This is definitely going to be added.
+* At the moment, there are no possibilities to just flip through months like in most calendars. I'm undecided if this belongs in this plugins or should just be done by the user.
+
+Bugs & Feedback
+===============
+
+You can send me feedback, bug reports and patches via "GitHub":http://github.com/clemensk.
+
+Copyright (c) 2009 Clemens Kofler <clemens@railway.at>, released under the MIT license.
