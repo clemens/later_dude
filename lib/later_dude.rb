@@ -106,7 +106,7 @@ module LaterDude
       return if @options[:hide_month_name]
 
       %(<tr>
-        <th colspan="7">#{I18n.translate(:'date.month_names')[@month]}</th>
+        <th colspan="7">#{I18n.localize(@days.first, :format => @options[:header_date_format])}</th>
       </tr>)
     end
 
@@ -166,7 +166,8 @@ module LaterDude
           :hide_day_names => false,
           :hide_month_name => false,
           :use_full_day_names => false,
-          :use_full_month_names => true
+          :use_full_month_names => true,
+          :header_date_format => I18n.translate(:'date.formats.calendar_header', :default => "%B")
         }
       end
     end

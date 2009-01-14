@@ -32,6 +32,7 @@ Possible options are:
   * :hide_month_name: Hide the table header showing the month name. Defaults to false.
   * :use_full_day_names: Use full instead of abbreviated day names. Defaults to false.
   * :use_full_month_names: Use full instead of abbreviated month names. Defaults to true.
+  * :header_date_format: Use the given date format to customize how the month name is shown in the table header. This uses I18n.localize internally, so you can either pass a strftime-compatible string which is then interpolated (e.g. "%b %y" to show the abbreviated month and two-digit year) or a symbol which will be looked up in the locale (e.g. :long will look for :'date.formats.long'). Defaults to the :'date.formats.calendar_header' translation in the respective locale or "%B %Y" (e.g. "January 2009") if no translation can be found.
 
 You can also pass in a block to mark days according to your own set of rules. The block gets passed each day of the current month (i.e. days of the previous and following month are *not* yielded):
 
@@ -66,7 +67,6 @@ Next steps
 
 There are a few things that are missing in this release and will probably be added over the next few days:
 
-  * It should be possible to customize the month header using date formatting so one can display "January", "January 2009", "Jan 09" etc. without too much hassle. This is definitely going to be added.
   * At the moment, there are no possibilities to just flip through months like in most calendars. I'm undecided if this belongs in this plugins or should just be done by the user.
 
 Bugs & Feedback

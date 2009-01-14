@@ -22,11 +22,19 @@ class CalendarTest < ActiveSupport::TestCase
 
     assert default_calendar_options[:use_full_month_names]
 
+    # some options use i18n ...
+    I18n.stubs(:translate).with(:'date.first_day_of_week', :default => "0").then.returns("1")
+    I18n.stubs(:translate).with(:'date.formats.calendar_header', :default => "%B").then.returns("%B %Y")
+
     # default first day of week is Sunday (= 0) if no translation is set in locale
     assert_equal 0, default_calendar_options[:first_day_of_week]
     # with default first day of week set in locale
-    I18n.expects(:translate).with(:'date.first_day_of_week', :default => "0").then.returns("1")
     assert_equal 1, (LaterDude::Calendar.send(:default_calendar_options)[:first_day_of_week]) # have to do this so that we don't use the cached version
+
+    # default date format for header is to show the full month name if no translation is set in locale
+    assert_equal "%B", default_calendar_options[:header_date_format]
+    # with default date format set in locale
+    assert_equal "%B %Y", (LaterDude::Calendar.send(:default_calendar_options)[:header_date_format])
   end
 
   # options
@@ -52,8 +60,13 @@ class CalendarTest < ActiveSupport::TestCase
     assert_nil LaterDude::Calendar.new(2009, 1, :hide_day_names => true).send(:show_day_names)
   end
 
+  # TODO I think this isn't needed anymore due to the new :header_date_format option
   test "doesn't show month names" do
     assert_nil LaterDude::Calendar.new(2009, 1, :hide_month_name => true).send(:show_month_names)
+  end
+
+  test "uses date format for calendar header" do
+    assert_match %r(January 2009), LaterDude::Calendar.new(2009, 1, :header_date_format => "%B %Y").to_html
   end
 
   # helper methods
