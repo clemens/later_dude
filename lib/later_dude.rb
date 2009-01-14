@@ -35,7 +35,7 @@ module LaterDude
 
     private
     def show_days
-      "#{show_previous_month}#{show_current_month}#{show_following_month}"
+      "<tr>#{show_previous_month}#{show_current_month}#{show_following_month}</tr>"
     end
 
     def show_previous_month
@@ -80,7 +80,9 @@ module LaterDude
       end
 
       returning content_tag(:td, content, options) do |output|
-        output << "</tr><tr>" if day.wday == last_day_of_week
+        if day < @days.last && day.wday == last_day_of_week # opening and closing tag for the first and last week are included in #show_days
+          output << "</tr><tr>" # close table row at the end of a week and start a new one
+        end
       end
     end
 
