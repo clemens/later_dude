@@ -111,6 +111,11 @@ class CalendarTest < ActiveSupport::TestCase
     assert_nil LaterDude::Calendar.new(2009, 2).send(:show_following_month) # February 28th is a Saturday
   end
 
+  test "highlights current day (= today)" do
+    Date.stubs(:current).then.returns(Date.civil(2009, 1, 14))
+    assert_match %r(<td class="(.*)today(.*)">14</td>), LaterDude::Calendar.new(2009, 1).to_html
+  end
+
   test "shows special days as designated by a block" do
     CalendarTest.send(:include, ActionView::Helpers)
 

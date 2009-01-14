@@ -7,6 +7,7 @@ It was heavily inspired by "Jeremy Voorhis'/Geoffrey Grosenbach's calendar_helpe
 
   * LaterDude leverages the power of the "Rails i18n plugin":http://rails-i18n.org. This means that if you have Rails 2.2 or higher (or if you've installed the i18n gem and the plugin separately), you can just drop in locales and you'll get localized month and day names.
   * Where the calendar_helper had one helper method that internally called multiple other private methods, LaterDude keeps the namespace clean by tucking away all of its functionality in a presenter (of sorts).
+  * Most CSS class names are given implictly, e.g. "day", "weekendDay" (both are given to the displayed month as well as to the previous and following month), "otherMonth" (all days that don't belong to the displayed month) and "today". The only CSS class that can be configured is the table's class (which defaults to "calendar"). Further customization can be taken care of by passing a block (see examples).
 
 
 Examples
@@ -65,9 +66,8 @@ Next steps
 
 There are a few things that are missing in this release and will probably be added over the next few days:
 
-* It should be possible to customize the month header using date formatting so one can display "January", "January 2009", "Jan 09" etc. without too much hassle. This is definitely going to be added.
-* The current date (= today) should be highlighted if the user wants to. At the moment, of course, this can be done inside the block but I'm thinking about including it as a separate option.
-* At the moment, there are no possibilities to just flip through months like in most calendars. I'm undecided if this belongs in this plugins or should just be done by the user.
+  * It should be possible to customize the month header using date formatting so one can display "January", "January 2009", "Jan 09" etc. without too much hassle. This is definitely going to be added.
+  * At the moment, there are no possibilities to just flip through months like in most calendars. I'm undecided if this belongs in this plugins or should just be done by the user.
 
 Bugs & Feedback
 ===============

@@ -64,6 +64,7 @@ module LaterDude
       options = { :class => "day" }
       options[:class] << " otherMonth" if day.month != @days.first.month
       options[:class] << " weekend" if Calendar.weekend?(day)
+      options[:class] << " today" if day.today?
 
       # block is only called for current month
       if @block && day.month == @days.first.month
