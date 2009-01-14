@@ -66,7 +66,7 @@ module LaterDude
       options[:class] << " weekend" if Calendar.weekend?(day)
 
       # block is only called for current month
-      if day.month == @days.first.month && @block
+      if @block && day.month == @days.first.month
         content, options_from_block = Array(@block.call(day))
 
         # passing options is optional
