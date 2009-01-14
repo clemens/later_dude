@@ -62,6 +62,26 @@ Hint: You can avoid cluttering up your views and move the block to a helper:
   # app/views/calendar/show.html
   <%= calendar_for(2009, 1, &calendar_events_proc)
 
+i18n
+====
+
+You can define the following keys in your locale files to customize output:
+
+  * date.formats.calendar_header: Defines the date format to be used for the table header.
+  * date.first_day_of_week: Defines the first day of a week (0 = Sunday, 1 = Monday etc.).
+
+Of course, you can also put other configuration options in the locale and then pass them in manually:
+
+  # somewhere in a locale
+  date:
+    calendar:
+      calendar_class: my_cool_calendar
+      
+  # in the view
+  <%= calendar_for(2009, 1, :calendar_class => I18n.translate(:'date.calendar.calendar_class', :default => "my_calendar"))
+
+Note that you should always pass in a default in case a translation can't be found since your options override the default options which might result in weird exceptions if the translation is missing.
+
 Next steps
 ==========
 
