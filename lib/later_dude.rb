@@ -10,10 +10,15 @@ module LaterDude
   # TODO: Maybe make output prettier?
   class Calendar
     include ActionView::Helpers::TagHelper
+    include ActionView::Helpers::UrlHelper
 
     def initialize(year, month, options={}, &block)
       @year, @month = year, month
       @options = options.symbolize_keys.reverse_merge(Calendar.default_calendar_options)
+
+      # next_month and previous_month take precedence over next_and_previous_month
+      @options[:next_month]     ||= @options[:next_and_previous_month]
+      @options[:previous_month] ||= @options[:next_and_previous_month]
 
       @days = Date.civil(@year, @month, 1)..Date.civil(@year, @month, -1)
       @block = block
@@ -92,24 +97,67 @@ module LaterDude
       day - diff
     end
 
-    def month_names
-      @month_names ||= @options[:use_full_month_names] ? full_month_names : abbreviated_month_names
-    end
-
-    def full_month_names
-      @full_month_names ||= I18n.translate(:'date.month_names')
-    end
-
-    def abbreviated_month_names
-      @abbreviated_month_names ||= I18n.translate(:'date.abbr_month_names')
-    end
-
     def show_month_names
       return if @options[:hide_month_name]
 
       %(<tr>
-        <th colspan="7">#{I18n.localize(@days.first, :format => @options[:header_date_format])}</th>
+        #{previous_month}#{current_month}#{next_month}
       </tr>)
+    end
+
+    # @options[:previous_month] can either be a single value or an array containing two values. For a single value, the
+    # value can either be a strftime compatible string or a proc.
+    # For an array, the first value is considered to be a strftime compatible string and the second is considered to be
+    # a proc. If the second value is not a proc then it will be ignored.
+    def previous_month
+      return unless previous_month = @options[:previous_month]
+
+      m = (@days.first - 1.month)
+
+      returning '<th colspan="2">' do |output|
+        output << if previous_month.kind_of?(Array) && previous_month.size == 2
+          text = I18n.localize(m, :format => previous_month.first.to_s)
+          previous_month.last.respond_to?(:call) ? link_to(text, previous_month.last.call(m)) : text
+        else
+          previous_month.respond_to?(:call) ? previous_month.call(m) : I18n.localize(m, :format => previous_month.to_s)
+        end
+        output << '</th>'
+      end
+    end
+
+    # see previous_month
+    def next_month
+      return unless next_month = @options[:next_month]
+
+      m = (@days.first + 1.month)
+
+      returning '<th colspan="2">' do |output|
+        output << if next_month.kind_of?(Array) && next_month.size == 2
+          text = I18n.localize(m, :format => next_month.first.to_s)
+          next_month.last.respond_to?(:call) ? link_to(text, next_month.last.call(m)) : text
+        else
+          next_month.respond_to?(:call) ? next_month.call(m) : I18n.localize(m, :format => next_month.to_s)
+        end
+        output << '</th>'
+      end
+    end
+
+    # see previous_month and next_month
+    def current_month
+      current_month = @options[:current_month]
+      m = @days.first
+
+      colspan = @options[:previous_month] || @options[:next_month] ? 3 : 7 # span across all 7 days if previous and next month aren't shown
+
+      returning %(<th colspan="#{colspan}">) do |output|
+        output << if current_month.kind_of?(Array) && current_month.size == 2
+          text = I18n.localize(m, :format => current_month.first.to_s)
+          current_month.last.respond_to?(:call) ? link_to(text, current_month.last.call(m)) : text
+        else
+          current_month.respond_to?(:call) ? current_month.call(m) : I18n.localize(m, :format => current_month.to_s)
+        end
+        output << '</th>'
+      end
     end
 
     def day_names
@@ -168,8 +216,10 @@ module LaterDude
           :hide_day_names => false,
           :hide_month_name => false,
           :use_full_day_names => false,
-          :use_full_month_names => true,
-          :header_date_format => I18n.translate(:'date.formats.calendar_header', :default => "%B")
+          :current_month => I18n.translate(:'date.formats.calendar_header', :default => "%B"),
+          :next_month => false,
+          :previous_month => false,
+          :next_and_previous_month => false
         }
       end
     end
