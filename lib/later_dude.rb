@@ -110,51 +110,34 @@ module LaterDude
     # For an array, the first value is considered to be a strftime compatible string and the second is considered to be
     # a proc. If the second value is not a proc then it will be ignored.
     def previous_month
-      return unless previous_month = @options[:previous_month]
+      return unless @options[:previous_month]
 
-      m = (@days.first - 1.month)
-
-      returning '<th colspan="2">' do |output|
-        output << if previous_month.kind_of?(Array) && previous_month.size == 2
-          text = I18n.localize(m, :format => previous_month.first.to_s)
-          previous_month.last.respond_to?(:call) ? link_to(text, previous_month.last.call(m)) : text
-        else
-          previous_month.respond_to?(:call) ? previous_month.call(m) : I18n.localize(m, :format => previous_month.to_s)
-        end
-        output << '</th>'
-      end
+      show_month(@days.first - 1.month, @options[:previous_month])
     end
 
     # see previous_month
     def next_month
-      return unless next_month = @options[:next_month]
+      return unless @options[:next_month]
 
-      m = (@days.first + 1.month)
-
-      returning '<th colspan="2">' do |output|
-        output << if next_month.kind_of?(Array) && next_month.size == 2
-          text = I18n.localize(m, :format => next_month.first.to_s)
-          next_month.last.respond_to?(:call) ? link_to(text, next_month.last.call(m)) : text
-        else
-          next_month.respond_to?(:call) ? next_month.call(m) : I18n.localize(m, :format => next_month.to_s)
-        end
-        output << '</th>'
-      end
+      show_month(@days.first + 1.month, @options[:next_month])
     end
 
     # see previous_month and next_month
     def current_month
-      current_month = @options[:current_month]
-      m = @days.first
-
       colspan = @options[:previous_month] || @options[:next_month] ? 3 : 7 # span across all 7 days if previous and next month aren't shown
 
-      returning %(<th colspan="#{colspan}">) do |output|
-        output << if current_month.kind_of?(Array) && current_month.size == 2
-          text = I18n.localize(m, :format => current_month.first.to_s)
-          current_month.last.respond_to?(:call) ? link_to(text, current_month.last.call(m)) : text
+      show_month(@days.first, @options[:current_month], :colspan => colspan)
+    end
+
+    def show_month(month, format, options={})
+      options[:colspan] ||= 2
+
+      returning %(<th colspan="#{options[:colspan]}">) do |output|
+        output << if format.kind_of?(Array) && format.size == 2
+          text = I18n.localize(month, :format => format.first.to_s)
+          format.last.respond_to?(:call) ? link_to(text, format.last.call(month)) : text
         else
-          current_month.respond_to?(:call) ? current_month.call(m) : I18n.localize(m, :format => current_month.to_s)
+          format.respond_to?(:call) ? format.call(month) : I18n.localize(month, :format => format.to_s)
         end
         output << '</th>'
       end
