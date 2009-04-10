@@ -1,4 +1,5 @@
 require 'i18n'
+require 'action_view'
 
 module LaterDude
   module CalendarHelper
@@ -100,7 +101,7 @@ module LaterDude
     def show_month_names
       return if @options[:hide_month_name]
 
-      %(<tr>
+      %(<tr class="month_names">
         #{previous_month}#{current_month}#{next_month}
       </tr>)
     end
@@ -112,27 +113,27 @@ module LaterDude
     def previous_month
       return unless @options[:previous_month]
 
-      show_month(@days.first - 1.month, @options[:previous_month])
+      show_month(@days.first - 1.month, @options[:previous_month], :class => "previous")
     end
 
     # see previous_month
     def next_month
       return unless @options[:next_month]
 
-      show_month(@days.first + 1.month, @options[:next_month])
+      show_month(@days.first + 1.month, @options[:next_month], :class => "next")
     end
 
     # see previous_month and next_month
     def current_month
       colspan = @options[:previous_month] || @options[:next_month] ? 3 : 7 # span across all 7 days if previous and next month aren't shown
 
-      show_month(@days.first, @options[:current_month], :colspan => colspan)
+      show_month(@days.first, @options[:current_month], :colspan => colspan, :class => "current")
     end
 
     def show_month(month, format, options={})
       options[:colspan] ||= 2
 
-      returning %(<th colspan="#{options[:colspan]}">) do |output|
+      returning %(<th colspan="#{options[:colspan]}" class="#{options[:class]} #{Date::MONTHNAMES[month.month].downcase}">) do |output|
         output << if format.kind_of?(Array) && format.size == 2
           text = I18n.localize(month, :format => format.first.to_s)
           format.last.respond_to?(:call) ? link_to(text, format.last.call(month)) : text
@@ -158,9 +159,9 @@ module LaterDude
     def show_day_names
       return if @options[:hide_day_names]
 
-      returning "<tr>" do |output|
+      returning '<tr class="day_names">' do |output|
         apply_first_day_of_week(day_names).each do |day|
-          output << %(<th scope="col">#{include_day_abbreviation(day)}</th>)
+          output << %(<th scope="col" class="#{Date::DAYNAMES[day_names.index(day)].downcase}">#{include_day_abbreviation(day)}</th>)
         end
         output << "</tr>"
       end
