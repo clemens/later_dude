@@ -41,7 +41,7 @@ You can also pass in a block to mark days according to your own set of rules. Th
 
   <%= calendar_for(2009, 1) do |day|
     if Calendar.has_events_on?(day)
-      [link_to events_path(day.year, day.month, day.day), { :class => "dayWithEvents" }]
+      [link_to(day.day, events_path(day.year, day.month, day.day)), { :class => "dayWithEvents" }]
     else
       day.day
     end
@@ -55,7 +55,7 @@ Hint: You can avoid cluttering up your views and move the block to a helper:
   def calendar_events_proc
     lambda do |day|
       if Calendar.has_events_on?(day)
-        [link_to events_path(day.year, day.month, day.day), { :class => "dayWithEvents" }]
+        [link_to(day.day, events_path(day.year, day.month, day.day)), { :class => "dayWithEvents" }]
       else
         day.day
       end
