@@ -1,3 +1,7 @@
+2009/10/30
+----------
+- Introduced new :yield_surrounding_days option to yield surrounding days of other months to passed block.
+
 2009/2/2
 ---------
 - Introduced options to show and format next and previous month.
