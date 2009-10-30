@@ -190,7 +190,7 @@ class CalendarTest < ActiveSupport::TestCase
 
   test "highlights current day (= today)" do
     Date.stubs(:current).then.returns(Date.civil(2009, 1, 14))
-    assert_match %r(<td class="(.*)today(.*)">14</td>), LaterDude::Calendar.new(2009, 1).to_html
+    assert_match %r(<td class="([^\"]*)today([^\"]*)">14</td>), LaterDude::Calendar.new(2009, 1).to_html
   end
 
   test "shows special days as designated by a block" do
@@ -209,11 +209,45 @@ class CalendarTest < ActiveSupport::TestCase
 
     (Date.civil(2009, 1, 1)..Date.civil(2009, 1, -1)).each do |day|
       if day.day.even?
-        assert_match %r(<td class="day(.*)specialDay"><a href="/calendar/#{day.year}/#{day.month}/#{day.day}">#{day.day}</a></td>), calendar_html
+        assert_match %r(<td class="day([^\"]*)specialDay"><a href="/calendar/#{day.year}/#{day.month}/#{day.day}">#{day.day}</a></td>), calendar_html
       else
-        assert_match %r(<td class="day(.*)">#{day.day}</td>), calendar_html
-        assert_no_match %r(<td class="day(.*)specialDay"><a href="/calendar/#{day.year}/#{day.month}/#{day.day}">#{day.day}</a></td>), calendar_html
+        assert_match %r(<td class="day([^\"]*)">#{day.day}</td>), calendar_html
+        assert_no_match %r(<td class="day([^\"]*)specialDay"><a href="/calendar/#{day.year}/#{day.month}/#{day.day}">#{day.day}</a></td>), calendar_html
       end
+    end
+  end
+
+  test "yields days of surrounding months :yield_surrounding_days is set to true" do
+    CalendarTest.send(:include, ActionView::Helpers)
+
+    # make it bold
+    special_days_proc = lambda { |day| "<b>#{day.day}</b>" }
+
+    calendar_html = LaterDude::Calendar.new(2009, 4, { :yield_surrounding_days => true }, &special_days_proc).to_html
+
+    # start of first week: 29 March 2009
+    # end of last week: 2 May 2009
+    surrounding_days = [Date.civil(2009, 3, 29), Date.civil(2009, 3, 30), Date.civil(2009, 3, 31), Date.civil(2009, 5, 1), Date.civil(2009, 5, 2)]
+    surrounding_days.each do |day|
+      assert_match %r(<td class="day([^\"]*)otherMonth([^\"]*)"><b>#{day.day}</b></td>), calendar_html
+    end
+  end
+
+  test "yields days of surrounding months :yield_surrounding_days isn't set to true" do
+    CalendarTest.send(:include, ActionView::Helpers)
+
+    # make it bold
+    special_days_proc = lambda { |day| "<b>#{day.day}</b>" }
+
+    calendar_html  = LaterDude::Calendar.new(2009, 4, &special_days_proc).to_html
+    calendar_html2 = LaterDude::Calendar.new(2009, 4, { :yield_surrounding_days => false }, &special_days_proc).to_html
+
+    # start of first week: 29 March 2009
+    # end of last week: 2 May 2009
+    surrounding_days = [Date.civil(2009, 3, 29), Date.civil(2009, 3, 30), Date.civil(2009, 3, 31), Date.civil(2009, 5, 1), Date.civil(2009, 5, 2)]
+    surrounding_days.each do |day|
+      assert_no_match %r(<td class="day([^\"]*)otherMonth([^\"]*)"><b>#{day.day}</b></td>), calendar_html
+      assert_no_match %r(<td class="day([^\"]*)otherMonth([^\"]*)"><b>#{day.day}</b></td>), calendar_html2
     end
   end
 

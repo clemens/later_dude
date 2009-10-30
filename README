@@ -32,6 +32,8 @@ Possible options are:
   * :hide_month_name: Hide the table header showing the month name. Defaults to false.
   * :use_full_day_names: Use full instead of abbreviated day names. Defaults to false.
   * :use_full_month_names: Use full instead of abbreviated month names. Defaults to true.
+  * :yield_surrounding_days: Defines whether or not days or the previous and next month are yielded to the passed block. Defaults to false.
+
   * :next_month: Defines if and how the next month should be displayed. See section "Formatting the header section" for further information.
   * :previous_month: Defines if and how the previous month should be displayed. See section "Formatting the header section" for further information.
   * :next_and_previous_month: Defines if and how the next and previous month should be displayed. See section "Formatting the header section" for further information.

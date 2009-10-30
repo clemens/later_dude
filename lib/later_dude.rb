@@ -72,8 +72,8 @@ module LaterDude
       options[:class] << " weekend" if Calendar.weekend?(day)
       options[:class] << " today" if day.today?
 
-      # block is only called for current month
-      if @block && day.month == @days.first.month
+      # block is only called for current month or if :yield_surrounding_days is set to true
+      if @block && (@options[:yield_surrounding_days] || day.month == @days.first.month)
         content, options_from_block = Array(@block.call(day))
 
         # passing options is optional
@@ -203,7 +203,8 @@ module LaterDude
           :current_month => I18n.translate(:'date.formats.calendar_header', :default => "%B"),
           :next_month => false,
           :previous_month => false,
-          :next_and_previous_month => false
+          :next_and_previous_month => false,
+          :yield_surrounding_days => false
         }
       end
     end
