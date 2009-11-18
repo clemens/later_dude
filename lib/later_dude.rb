@@ -15,7 +15,7 @@ module LaterDude
 
     def initialize(year, month, options={}, &block)
       @year, @month = year, month
-      @options = options.symbolize_keys.reverse_merge(Calendar.default_calendar_options)
+      @options = options.symbolize_keys.reverse_merge(self.class.default_calendar_options)
 
       # next_month and previous_month take precedence over next_and_previous_month
       @options[:next_month]     ||= @options[:next_and_previous_month]
