@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{later_dude}
-  s.version = "0.2.1"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Clemens Kofler"]
-  s.date = %q{2009-10-31}
+  s.date = %q{2010-03-07}
   s.description = %q{LaterDude is a small calendar helper plugin for Rails with i18n support.}
   s.email = %q{clemens@railway.at}
   s.extra_rdoc_files = [
