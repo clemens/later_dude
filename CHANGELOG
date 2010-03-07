@@ -2,6 +2,7 @@
 ----------
 - Make LaterDude Rails 3-compatible
 - Include Rails 2 compatibility layer
+- Fix broken gem release (0.3.1)
 
 2009/11/18
 ----------

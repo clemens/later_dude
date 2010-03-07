@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{later_dude}
-  s.version = "0.3.0"
+  s.version = "0.3.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Clemens Kofler"]
@@ -23,6 +23,9 @@ Gem::Specification.new do |s|
      "VERSION",
      "init.rb",
      "lib/later_dude.rb",
+     "lib/later_dude/calendar.rb",
+     "lib/later_dude/calendar_helper.rb",
+     "lib/later_dude/rails2_compat.rb",
      "tasks/distribution.rb",
      "tasks/documentation.rb",
      "tasks/testing.rb"

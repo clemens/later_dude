@@ -16,11 +16,19 @@ You can use LaterDude either as a gem (preferred) or as a Rails plugin.
 
 To use the gem version, put the following gem requirement in your environment.rb:
 
-  config.gem "later_dude", :source => 'http://gemcutter.org'
+  config.gem 'later_dude', :source => 'http://gemcutter.org'
+
+Or with Rails 3, add the gem requirement to your Gemfile:
+
+  gem 'later_dude', '>= 0.3.1' # 0.3.0 was broken!
 
 To install it as a plugin, fire up your terminal, go to your Rails app and type:
 
   $ ruby script/plugin install git://github.com/clemens/later_dude.git
+
+To use the CalendarHelper, put this in a controller:
+
+  helper LaterDude::CalendarHelper
 
 Examples
 ========
@@ -139,4 +147,4 @@ Bugs & Feedback
 
 You can send me feedback, bug reports and patches via "GitHub":http://github.com/clemens.
 
-Copyright (c) 2009 Clemens Kofler <clemens@railway.at>, released under the MIT license.
+Copyright (c) 2009, 2010 Clemens Kofler <clemens@railway.at>, released under the MIT license.
