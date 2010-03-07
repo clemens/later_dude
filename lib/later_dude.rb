@@ -1,5 +1,4 @@
-require 'i18n'
-require 'action_view'
+require 'rails2_compat'
 
 module LaterDude
   module CalendarHelper
@@ -10,8 +9,11 @@ module LaterDude
 
   # TODO: Maybe make output prettier?
   class Calendar
+    include ActionView::Helpers::CaptureHelper
     include ActionView::Helpers::TagHelper
     include ActionView::Helpers::UrlHelper
+
+    attr_accessor :output_buffer
 
     def initialize(year, month, options={}, &block)
       @year, @month = year, month
@@ -26,22 +28,14 @@ module LaterDude
     end
 
     def to_html
-      <<-EOF
-        <table class="#{@options[:calendar_class]}">
-          <thead>
-            #{show_month_names}
-            #{show_day_names}
-          </thead>
-          <tbody>
-            #{show_days}
-          </tbody>
-        </table>
-      EOF
+      content_tag(:table, :class => "#{@options[:calendar_class]}") do
+        content_tag(:tbody, show_days)+ content_tag(:thead, "#{show_month_names}#{show_day_names}".html_safe)
+      end
     end
 
     private
     def show_days
-      "<tr>#{show_previous_month}#{show_current_month}#{show_following_month}</tr>"
+      content_tag(:tr, "#{show_previous_month}#{show_current_month}#{show_following_month}".html_safe)
     end
 
     def show_previous_month
@@ -49,13 +43,13 @@ module LaterDude
 
       returning "" do |output|
         beginning_of_week(@days.first).upto(@days.first - 1) { |d| output << show_day(d) }
-      end
+      end.html_safe
     end
 
     def show_current_month
       returning "" do |output|
         @days.first.upto(@days.last) { |d| output << show_day(d) }
-      end
+      end.html_safe
     end
 
     def show_following_month
@@ -63,7 +57,7 @@ module LaterDude
 
       returning "" do |output|
         (@days.last + 1).upto(beginning_of_week(@days.last + 1.week) - 1) { |d| output << show_day(d) }
-      end
+      end.html_safe
     end
 
     def show_day(day)
@@ -85,11 +79,12 @@ module LaterDude
         content = day.day
       end
 
-      returning content_tag(:td, content, options) do |output|
-        if day < @days.last && day.wday == last_day_of_week # opening and closing tag for the first and last week are included in #show_days
-          output << "</tr><tr>" # close table row at the end of a week and start a new one
-        end
-      end
+      content = content_tag(:td, content.to_s.html_safe, options)
+
+      # close table row at the end of a week and start a new one
+      # opening and closing tag for the first and last week are included in #show_days
+      content << "</tr><tr>".html_safe if day < @days.last && day.wday == last_day_of_week
+      content
     end
 
     def beginning_of_week(day)
@@ -101,9 +96,7 @@ module LaterDude
     def show_month_names
       return if @options[:hide_month_name]
 
-      %(<tr class="month_names">
-        #{previous_month}#{current_month}#{next_month}
-      </tr>)
+      content_tag(:tr, "#{previous_month}#{current_month}#{next_month}".html_safe, :class => 'month_names')
     end
 
     # @options[:previous_month] can either be a single value or an array containing two values. For a single value, the
@@ -133,14 +126,13 @@ module LaterDude
     def show_month(month, format, options={})
       options[:colspan] ||= 2
 
-      returning %(<th colspan="#{options[:colspan]}" class="#{options[:class]} #{Date::MONTHNAMES[month.month].downcase}">) do |output|
-        output << if format.kind_of?(Array) && format.size == 2
-          text = I18n.localize(month, :format => format.first.to_s)
+      content_tag(:th, :colspan => options[:colspan], :class => "#{options[:class]} #{Date::MONTHNAMES[month.month].downcase}") do
+        if format.kind_of?(Array) && format.size == 2
+          text = I18n.localize(month, :format => format.first.to_s).html_safe
           format.last.respond_to?(:call) ? link_to(text, format.last.call(month)) : text
         else
-          format.respond_to?(:call) ? format.call(month) : I18n.localize(month, :format => format.to_s)
+          format.respond_to?(:call) ? format.call(month) : I18n.localize(month, :format => format.to_s).html_safe
         end
-        output << '</th>'
       end
     end
 
@@ -158,12 +150,10 @@ module LaterDude
 
     def show_day_names
       return if @options[:hide_day_names]
-
-      returning '<tr class="day_names">' do |output|
-        apply_first_day_of_week(day_names).each do |day|
-          output << %(<th scope="col" class="#{Date::DAYNAMES[day_names.index(day)].downcase}">#{include_day_abbreviation(day)}</th>)
-        end
-        output << "</tr>"
+      content_tag(:tr, :class => 'day_names') do
+        apply_first_day_of_week(day_names).inject('') do |output, day|
+          output << content_tag(:th, include_day_abbreviation(day), :scope => 'col', :class => Date::DAYNAMES[day_names.index(day)].downcase)
+        end.html_safe
       end
     end
 
@@ -171,7 +161,7 @@ module LaterDude
     def include_day_abbreviation(day)
       return day if @options[:use_full_day_names]
 
-      %(<abbr title="#{full_day_names[abbreviated_day_names.index(day)]}">#{day}</abbr>)
+      content_tag(:abbr, day, :title => full_day_names[abbreviated_day_names.index(day)])
     end
 
     def apply_first_day_of_week(day_names)
@@ -210,3 +200,5 @@ module LaterDude
     end
   end
 end
+
+ActionView::Base.send(:include, LaterDude::CalendarHelper)

@@ -1,3 +1,12 @@
+2010/03/07
+----------
+- Make LaterDude Rails 3-compatible
+- Include Rails 2 compatibility layer
+
+2009/11/18
+----------
+- Make it possible for subclasses to override default settings.
+
 2009/10/30
 ----------
 - Introduced new :yield_surrounding_days option to yield surrounding days of other months to passed block.

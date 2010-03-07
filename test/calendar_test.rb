@@ -1,5 +1,7 @@
 require 'test_helper'
 
+I18n.load_path += Dir[File.expand_path('fixtures/locales', File.dirname(__FILE__)) + '/*.yml']
+
 # TODO: figure out why I have to reference Calendar via its module ...
 class CalendarTest < ActiveSupport::TestCase
   # some constants for increased readability
@@ -7,6 +9,10 @@ class CalendarTest < ActiveSupport::TestCase
   ABBR_DAY_NAMES   = I18n.translate(:'date.abbr_day_names')
   FULL_MONTH_NAMES = I18n.translate(:'date.month_names')
   ABBR_MONTH_NAMES = I18n.translate(:'date.abbr_month_names')
+
+  setup do
+    I18n.locale = 'en'
+  end
 
   test "has default options" do
     # TODO improve this so that every call gets a fresh copy of the default options
@@ -28,12 +34,10 @@ class CalendarTest < ActiveSupport::TestCase
     assert !default_calendar_options[:previous_month]
     assert !default_calendar_options[:next_and_previous_month]
 
-    # some options use i18n ...
-    I18n.stubs(:translate).with(:'date.first_day_of_week', :default => "0").then.returns("1")
-    I18n.stubs(:translate).with(:'date.formats.calendar_header', :default => "%B").then.returns("%B %Y")
-
     # default first day of week is Sunday (= 0) if no translation is set in locale
     assert_equal 0, default_calendar_options[:first_day_of_week]
+
+    I18n.locale = 'de'
     # with default first day of week set in locale
     assert_equal 1, (LaterDude::Calendar.send(:default_calendar_options)[:first_day_of_week]) # have to do this so that we don't use the cached version
 
@@ -70,7 +74,7 @@ class CalendarTest < ActiveSupport::TestCase
   end
 
   test "uses next month for proc" do
-    assert_match %r(<a href="/events/2009/2">&raquo;</a>), LaterDude::Calendar.new(2009, 1, :next_month => lambda { |date| link_to "&raquo;", "/events/#{date.year}/#{date.month}" }).send(:next_month)
+    assert_match %r(<a href="/events/2009/2">&raquo;</a>), LaterDude::Calendar.new(2009, 1, :next_month => lambda { |date| %(<a href="/events/#{date.year}/#{date.month}">&raquo;</a>) }).send(:next_month)
   end
 
   test "uses next month for array if first value is a string and second is a proc" do
@@ -90,7 +94,7 @@ class CalendarTest < ActiveSupport::TestCase
   end
 
   test "uses previous month for proc" do
-    assert_match %r(<a href="/events/2008/12">&laquo;</a>), LaterDude::Calendar.new(2009, 1, :previous_month => lambda { |date| link_to "&laquo;", "/events/#{date.year}/#{date.month}" }).send(:previous_month)
+    assert_match %r(<a href="/events/2008/12">&laquo;</a>), LaterDude::Calendar.new(2009, 1, :previous_month => lambda { |date| %(<a href="/events/#{date.year}/#{date.month}">&laquo;</a>) }).send(:previous_month)
   end
 
   test "uses previous month for array if first value is a string and second is a proc" do
@@ -122,7 +126,7 @@ class CalendarTest < ActiveSupport::TestCase
   end
 
   test "uses current month for proc" do
-    assert_match %r(<a href="/events/2009/1">Current</a>), LaterDude::Calendar.new(2009, 1, :current_month => lambda { |date| link_to "Current", "/events/#{date.year}/#{date.month}" }).send(:current_month)
+    assert_match %r(<a href="/events/2009/1">Current</a>), LaterDude::Calendar.new(2009, 1, :current_month => lambda { |date| %(<a href="/events/#{date.year}/#{date.month}">Current</a>) }).send(:current_month)
   end
 
   test "uses current month for array if first value is a string and second is a proc" do
@@ -135,8 +139,14 @@ class CalendarTest < ActiveSupport::TestCase
 
   # helper methods
   test "shows whether a given day is on a weekend or not" do
-    [0, 6].each { |day| assert  LaterDude::Calendar.weekend?(mock(:wday => day)) }
-    (1..5).each { |day| assert !LaterDude::Calendar.weekend?(mock(:wday => day)) }
+    # first week of March 2010 starts on Monday => :-)
+    (Date.civil(2010, 3, 1)..Date.civil(2010, 3, 5)).each do |day|
+      assert !LaterDude::Calendar.weekend?(day)
+    end
+
+    [Date.civil(2010, 3, 6), Date.civil(2010, 3, 7)].each do |day|
+      assert LaterDude::Calendar.weekend?(day)
+    end
   end
 
   test "includes day name abbreviation" do
@@ -194,12 +204,10 @@ class CalendarTest < ActiveSupport::TestCase
   end
 
   test "shows special days as designated by a block" do
-    CalendarTest.send(:include, ActionView::Helpers)
-
     # all even days should be linked
     special_days_proc = lambda do |day|
       if day.day.even?
-        [link_to(day.day, "/calendar/#{day.year}/#{day.month}/#{day.day}"), { :class => "specialDay" } ]
+        [%(<a href="/calendar/#{day.year}/#{day.month}/#{day.day}">#{day.day}</a>), { :class => 'specialDay' }]
       else
         day.day
       end
@@ -218,8 +226,6 @@ class CalendarTest < ActiveSupport::TestCase
   end
 
   test "yields days of surrounding months :yield_surrounding_days is set to true" do
-    CalendarTest.send(:include, ActionView::Helpers)
-
     # make it bold
     special_days_proc = lambda { |day| "<b>#{day.day}</b>" }
 
@@ -234,8 +240,6 @@ class CalendarTest < ActiveSupport::TestCase
   end
 
   test "yields days of surrounding months :yield_surrounding_days isn't set to true" do
-    CalendarTest.send(:include, ActionView::Helpers)
-
     # make it bold
     special_days_proc = lambda { |day| "<b>#{day.day}</b>" }
 
