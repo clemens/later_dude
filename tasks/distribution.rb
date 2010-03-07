@@ -9,7 +9,7 @@ begin
     s.authors     = ["Clemens Kofler"]
     s.files       =  FileList["CHANGELOG",
                               "init.rb",
-                              "lib/later_dude.rb",
+                              "lib/**/*.rb",
                               "MIT-LICENSE",
                               "Rakefile",
                               "README",
