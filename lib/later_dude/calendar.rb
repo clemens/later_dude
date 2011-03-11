@@ -33,13 +33,13 @@ module LaterDude
     def show_previous_month
       return if @days.first.wday == first_day_of_week # don't display anything if the first day is the first day of a week
 
-      returning "" do |output|
+      "".tap do |output|
         beginning_of_week(@days.first).upto(@days.first - 1) { |d| output << show_day(d) }
       end.html_safe
     end
 
     def show_current_month
-      returning "" do |output|
+      "".tap do |output|
         @days.first.upto(@days.last) { |d| output << show_day(d) }
       end.html_safe
     end
@@ -47,7 +47,7 @@ module LaterDude
     def show_following_month
       return if @days.last.wday == last_day_of_week # don't display anything if the last day is the last day of a week
 
-      returning "" do |output|
+      "".tap do |output|
         (@days.last + 1).upto(beginning_of_week(@days.last + 1.week) - 1) { |d| output << show_day(d) }
       end.html_safe
     end
