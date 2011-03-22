@@ -21,7 +21,7 @@ module LaterDude
 
     def to_html
       content_tag(:table, :class => "#{@options[:calendar_class]}") do
-        content_tag(:tbody, show_days)+ content_tag(:thead, "#{show_month_names}#{show_day_names}".html_safe)
+        content_tag(:tbody, show_days) + content_tag(:thead, "#{show_month_names}#{show_day_names}".html_safe)
       end
     end
 
@@ -123,8 +123,8 @@ module LaterDude
           text = I18n.localize(month, :format => format.first.to_s).html_safe
           format.last.respond_to?(:call) ? link_to(text, format.last.call(month)) : text
         else
-          format.respond_to?(:call) ? format.call(month) : I18n.localize(month, :format => format.to_s).html_safe
-        end
+          format.respond_to?(:call) ? format.call(month) : I18n.localize(month, :format => format.to_s)
+        end.html_safe
       end
     end
 
