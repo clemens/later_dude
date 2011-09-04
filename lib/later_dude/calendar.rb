@@ -21,7 +21,7 @@ module LaterDude
 
     def to_html
       content_tag(:table, :class => "#{@options[:calendar_class]}") do
-        content_tag(:tbody, show_days) + content_tag(:thead, "#{show_month_names}#{show_day_names}".html_safe)
+        content_tag(:thead, "#{show_month_names}#{show_day_names}".html_safe) + content_tag(:tbody, show_days) #changed order to be HTML 5 compliant
       end
     end
 
