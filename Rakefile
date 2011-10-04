@@ -1,9 +1,14 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
+require 'rdoc/task'
 
-require 'tasks/documentation'
-require 'tasks/testing'
+desc 'Test the later_dude gem.'
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'lib'
+  t.libs << 'test'
+  t.pattern = 'test/*_test.rb'
+  t.verbose = true
+end
 
 desc 'Default: run unit tests.'
 task :default => :test
