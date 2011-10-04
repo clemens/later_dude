@@ -1,6 +1,8 @@
 LaterDude
 =========
 
+[![Build Status](https://secure.travis-ci.org/clemens/later_dude.png)](http://travis-ci.org/clemens/later_dude)
+
 LaterDude is a small calendar helper plugin for Rails with i18n support.
 
 It was heavily inspired by "Jeremy Voorhis'/Geoffrey Grosenbach's calendar_helper plugin":http://topfunky.net/svn/plugins/calendar_helper/. Here's what's different:
