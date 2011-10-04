@@ -1,3 +1,20 @@
+require 'action_view'
+require 'action_view/helpers'
+require 'action_view/helpers/capture_helper'
+require 'action_view/helpers/tag_helper'
+require 'action_view/helpers/url_helper'
+
+begin
+  require 'active_support/core_ext/date/acts_like'
+  require 'active_support/core_ext/date_time/acts_like'
+  require 'active_support/core_ext/time/acts_like'
+
+  require 'active_support/core_ext/integer/time'
+  require 'active_support/core_ext/numeric/time'
+rescue LoadError
+  # nothing
+end
+
 module LaterDude
   # TODO: Maybe make output prettier?
   class Calendar
