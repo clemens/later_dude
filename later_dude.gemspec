@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.files = [
     "CHANGELOG",
     "MIT-LICENSE",
-    "README",
+    "README.md",
     "Rakefile",
     "init.rb",
     "lib/later_dude.rb",
