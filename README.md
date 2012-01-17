@@ -64,11 +64,11 @@ Possible options are:
 You can also pass in a block to mark days according to your own set of rules. The block gets passed each day of the current month (i.e. days of the previous and following month are *not* yielded):
 
     <%= calendar_for(2009, 1) do |day|
-        if Calendar.has_events_on?(day)
-            [link_to(day.day, events_path(day.year, day.month, day.day)), { :class => "dayWithEvents" }]
-        else
-            day.day
-        end
+      if Calendar.has_events_on?(day)
+        [link_to(day.day, events_path(day.year, day.month, day.day)), { :class => "dayWithEvents" }]
+      else
+        day.day
+      end
     end %>
 
 The block can either return an array containing two elements or a single value. If an array is returned, the first element will be the content of the table cell and the second will be used as HTML options for the table cell tag. If a single value is returned, it will be used as the content of the table cell.
@@ -77,13 +77,13 @@ Hint: You can avoid cluttering up your views and move the block to a helper:
 
     # app/helpers/calendar_helper.rb
     def calendar_events_proc
-        lambda do |day|
-            if Calendar.has_events_on?(day)
-                [link_to(day.day, events_path(day.year, day.month, day.day)), { :class => "dayWithEvents" }]
-            else
-                day.day
-            end
+      lambda do |day|
+        if Calendar.has_events_on?(day)
+          [link_to(day.day, events_path(day.year, day.month, day.day)), { :class => "dayWithEvents" }]
+        else
+          day.day
         end
+      end
     end
 
     # app/views/calendar/show.html
@@ -136,8 +136,8 @@ Of course, you can also put other configuration options in the locale and then p
 
     # somewhere in a locale
     date:
-        calendar:
-            calendar_class: my_cool_calendar
+      calendar:
+        calendar_class: my_cool_calendar
 
     # in the view
     <%= calendar_for(2009, 1, :calendar_class => I18n.translate(:'date.calendar.calendar_class', :default => "my_calendar"))
