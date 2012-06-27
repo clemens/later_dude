@@ -19,7 +19,8 @@ Gem::Specification.new do |s|
     "lib/later_dude.rb",
     "lib/later_dude/calendar.rb",
     "lib/later_dude/calendar_helper.rb",
-    "lib/later_dude/rails2_compat.rb"
+    "lib/later_dude/rails2_compat.rb",
+    "lib/later_dude/railtie.rb"
   ]
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
