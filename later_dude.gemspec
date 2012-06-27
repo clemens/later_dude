@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.email = %q{clemens@railway.at}
   s.homepage = %q{http://github.com/clemens/later_dude}
   s.extra_rdoc_files = [
-    "README"
+    "README.md"
   ]
   s.files = [
     "CHANGELOG",
