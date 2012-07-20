@@ -254,6 +254,22 @@ class CalendarTest < ActiveSupport::TestCase
       assert_no_match %r(<td class="day([^\"]*)otherMonth([^\"]*)"><b>#{day.day}</b></td>), calendar_html2
     end
   end
+  
+  test "first_rendered_date retunrs first date for current month that calendar render" do
+    calendar1  = LaterDude::Calendar.new(2012, 7, first_day_of_week: 1)
+    assert_equal calendar1.first_rendered_date, Date.new(2012, 6, 25)
+    
+    calendar2  = LaterDude::Calendar.new(2011, 8, first_day_of_week: 1)
+    assert_equal calendar2.first_rendered_date, Date.new(2011, 8, 1)
+  end
+  
+  test "last_rendered_date retunrs last date for current month that calendar render" do
+    calendar2  = LaterDude::Calendar.new(2012, 7, first_day_of_week: 1)
+    assert_equal calendar2.last_rendered_date, Date.new(2012, 8, 5)
+    
+    calendar2  = LaterDude::Calendar.new(2011, 7, first_day_of_week: 1)
+    assert_equal calendar2.last_rendered_date, Date.new(2011, 7, 31)
+  end
 
   # TODO: Should I do "real" output testing despite the good coverage of output-related methods? Testing HTML is tedious ...
 end
