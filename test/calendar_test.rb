@@ -254,6 +254,17 @@ class CalendarTest < ActiveSupport::TestCase
       assert_no_match %r(<td class="day([^\"]*)otherMonth([^\"]*)"><b>#{day.day}</b></td>), calendar_html2
     end
   end
+  
+  test "allows pass block to to_html method" do
+    proc = lambda do |day|
+      day.day
+    end
+
+    calendar_html1 = LaterDude::Calendar.new(2009, 1, &proc).to_html
+    calendar_html2 = LaterDude::Calendar.new(2009, 1).to_html(&proc)
+
+    assert_equal calendar_html1, calendar_html2
+  end
 
   # TODO: Should I do "real" output testing despite the good coverage of output-related methods? Testing HTML is tedious ...
 end

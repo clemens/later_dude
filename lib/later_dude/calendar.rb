@@ -36,7 +36,8 @@ module LaterDude
       @block = block
     end
 
-    def to_html
+    def to_html(&block)
+      @block = block if block_given?
       content_tag(:table, :class => "#{@options[:calendar_class]}") do
         content_tag(:thead, "#{show_month_names}#{show_day_names}".html_safe) + content_tag(:tbody, show_days)
       end
