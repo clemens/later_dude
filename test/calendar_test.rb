@@ -271,5 +271,14 @@ class CalendarTest < ActiveSupport::TestCase
     assert_equal calendar2.last_rendered_date, Date.new(2011, 7, 31)
   end
 
+  test "allows pass block to to_html method" do
+    proc = lambda { |day| day.day }
+
+    calendar_html1 = LaterDude::Calendar.new(2009, 1, &proc).to_html
+    calendar_html2 = LaterDude::Calendar.new(2009, 1).to_html(&proc)
+
+    assert_equal calendar_html1, calendar_html2
+  end
+
   # TODO: Should I do "real" output testing despite the good coverage of output-related methods? Testing HTML is tedious ...
 end
