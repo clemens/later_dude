@@ -149,4 +149,4 @@ Bugs & Feedback
 
 You can send me feedback, bug reports and patches via "GitHub":http://github.com/clemens.
 
-Copyright (c) 2009, 2010 Clemens Kofler <clemens@railway.at>, released under the MIT license.
+Copyright (c) 2009-2012 Clemens Kofler <clemens@railway.at>, released under the MIT license.
