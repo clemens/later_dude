@@ -41,6 +41,14 @@ module LaterDude
         content_tag(:thead, "#{show_month_names}#{show_day_names}".html_safe) + content_tag(:tbody, show_days)
       end
     end
+    
+    def first_rendered_date
+      beginning_of_week(@days.first)
+    end
+    
+    def last_rendered_date
+      beginning_of_week(@days.last + 1.week) - 1
+    end
 
     private
     def show_days
